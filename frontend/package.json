@@ -1,5 +1,5 @@
 {
-  "name": "rspack-express-jwt",
+  "name": "rspack-express-jwt-frontend",
   "private": true,
   "version": "1.0.0",
   "scripts": {
