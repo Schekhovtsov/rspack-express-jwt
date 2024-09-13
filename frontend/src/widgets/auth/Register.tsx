@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Input } from '../../shared/ui/Input/Input';
 import { RegisterButton } from '../../features/auth/registerButton/RegisterButton';
 
-export const AuthWidget = () => {
+export const Register = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
 
@@ -16,8 +16,13 @@ export const AuthWidget = () => {
 
   return (
     <>
-      <Input value={login} onChange={onLoginChange} />
-      <Input value={password} onChange={onPasswordChange} />
+      <h1>Register</h1>
+      <Input value={login} onChange={onLoginChange} placeholder="Login" />
+      <Input
+        value={password}
+        onChange={onPasswordChange}
+        placeholder="Password"
+      />
       <RegisterButton login={login} password={password} />
     </>
   );

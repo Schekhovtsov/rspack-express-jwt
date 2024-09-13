@@ -2,15 +2,12 @@ import { FC } from 'react';
 
 import { BASE_URL } from '../../../../public/config';
 
-type RegisterButtonProps = {
+type LoginButtonProps = {
   login: string;
   password: string;
 };
 
-export const RegisterButton: FC<RegisterButtonProps> = ({
-  login,
-  password,
-}) => {
+export const LoginButton: FC<LoginButtonProps> = ({ login, password }) => {
   const onClickHandler = async () => {
     const body = {
       login: login,
@@ -18,7 +15,7 @@ export const RegisterButton: FC<RegisterButtonProps> = ({
       user_type_id: 1,
     };
 
-    await fetch(`${BASE_URL}/register`, {
+    await fetch(`${BASE_URL}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
@@ -27,5 +24,5 @@ export const RegisterButton: FC<RegisterButtonProps> = ({
     });
   };
 
-  return <button onClick={onClickHandler}>Register</button>;
+  return <button onClick={onClickHandler}>Login</button>;
 };

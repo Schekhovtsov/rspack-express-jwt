@@ -29,14 +29,28 @@ const db = new sqlite3.Database('./database.db', (err) => {
             password NVARCHAR(20)  NOT NULL,\
             user_type_id NVARCHAR(20)  NOT NULL\
         )',
-            (err) => {
+            async (err) => {
                 if (err) {
                     console.log('Table already exists.');
                 }
                 let insert =
                     'INSERT INTO users (login, password, user_type_id) VALUES (?,?,?)';
-                db.run(insert, ['admin', 'admin', '1']);
-                db.run(insert, ['user', 'user', '2']);
+
+                const getCryptedPassword = async (password) => {
+                    const salt = await bcrypt.genSalt(10);
+                    return await bcrypt.hash(password, salt);
+                };
+
+                db.run(insert, [
+                    'admin',
+                    (await getCryptedPassword('admin')).toString(),
+                    '1',
+                ]);
+                db.run(insert, [
+                    'user',
+                    (await getCryptedPassword('user')).toString(),
+                    '2',
+                ]);
             }
         );
     }
@@ -61,10 +75,6 @@ exports.getAll = (req, res, next) => {
         }
         res.status(200).json({ rows });
     });
-};
-
-exports.login = (req, res, next) => {
-    var reqBody = req.body;
 };
 
 exports.register = async (req, res, next) => {
@@ -97,4 +107,57 @@ exports.register = async (req, res, next) => {
             });
         }
     );
+};
+
+exports.login = (req, res, next) => {
+    const body = req.body;
+    db.get(
+        `SELECT * FROM users where login = ?`,
+        [body.login],
+        async (err, user) => {
+            if (err) {
+                res.status(400).json({ error: err.message });
+                return;
+            }
+
+            if (user) {
+                const validPass = await bcrypt.compare(
+                    body.password,
+                    user.password
+                );
+
+                if (!validPass) {
+                    return res.status(401).send('Login or Password is wrong');
+                }
+
+                // Create and assign token
+                let payload = { id: user.id, user_type_id: user.user_type_id };
+                const token = jwt.sign(payload, config.TOKEN_SECRET);
+
+                res.status(200)
+                    .header('auth-token', token)
+                    .send({ data: user, token: token });
+            }
+        }
+    );
+};
+
+exports.userPage = (req, res, next) => {
+    db.all('SELECT * FROM users', [], (err, rows) => {
+        if (err) {
+            res.status(400).json({ error: err.message });
+            return;
+        }
+        res.status(200).json({ rows });
+    });
+};
+
+exports.adminPage = (req, res, next) => {
+    db.all('SELECT * FROM users', [], (err, rows) => {
+        if (err) {
+            res.status(400).json({ error: err.message });
+            return;
+        }
+        res.status(200).json({ rows });
+    });
 };

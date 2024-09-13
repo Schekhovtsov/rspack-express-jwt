@@ -1,11 +1,10 @@
-import { AuthWidget } from '../widgets/auth/AuthWidget';
+import { AuthPage } from '../pages/auth/AuthPage';
 import './App.css';
 
 const App = () => {
   return (
     <div className="content">
-      <h1>Rsbuild with React</h1>
-      <AuthWidget />
+      <AuthPage />
     </div>
   );
 };
