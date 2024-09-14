@@ -27,14 +27,14 @@ const db = new sqlite3.Database('./database.db', (err) => {
             id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
             login NVARCHAR(20)  NOT NULL,\
             password NVARCHAR(20)  NOT NULL,\
-            user_type_id NVARCHAR(20)  NOT NULL\
+            role NVARCHAR(20)  NOT NULL\
         )',
             async (err) => {
                 if (err) {
                     console.log('Table already exists.');
                 }
                 let insert =
-                    'INSERT INTO users (login, password, user_type_id) VALUES (?,?,?)';
+                    'INSERT INTO users (login, password, role) VALUES (?,?,?)';
 
                 const getCryptedPassword = async (password) => {
                     const salt = await bcrypt.genSalt(10);
@@ -44,12 +44,12 @@ const db = new sqlite3.Database('./database.db', (err) => {
                 db.run(insert, [
                     'admin',
                     (await getCryptedPassword('admin')).toString(),
-                    '1',
+                    'admin',
                 ]);
                 db.run(insert, [
                     'user',
                     (await getCryptedPassword('user')).toString(),
-                    '2',
+                    'user',
                 ]);
             }
         );
@@ -85,12 +85,12 @@ exports.register = async (req, res, next) => {
     let user = {
         login: req.body.login,
         password: password,
-        user_type_id: req.body.user_type_id,
+        role: req.body.role,
     };
 
     db.run(
-        `INSERT INTO users (login, password, user_type_id) VALUES (?,?,?)`,
-        [user.login, user.password, user.user_type_id],
+        `INSERT INTO users (login, password, role (?,?,?)`,
+        [user.login, user.password, user.role],
         function (err, result) {
             if (err) {
                 res.status(400).json({ error: err.message });
@@ -98,7 +98,7 @@ exports.register = async (req, res, next) => {
             }
             let payload = {
                 id: this.lastID,
-                user_type_id: user.user_type_id || 0,
+                role: user.role || 0,
             };
             const token = jwt.sign(payload, config.TOKEN_SECRET);
 
@@ -130,8 +130,7 @@ exports.login = (req, res, next) => {
                     return res.status(401).send('Login or Password is wrong');
                 }
 
-                // Create and assign token
-                let payload = { id: user.id, user_type_id: user.user_type_id };
+                let payload = { id: user.id, role: user.role };
                 const token = jwt.sign(payload, config.TOKEN_SECRET);
 
                 res.status(200)
@@ -142,22 +141,6 @@ exports.login = (req, res, next) => {
     );
 };
 
-exports.userPage = (req, res, next) => {
-    db.all('SELECT * FROM users', [], (err, rows) => {
-        if (err) {
-            res.status(400).json({ error: err.message });
-            return;
-        }
-        res.status(200).json({ rows });
-    });
-};
-
-exports.adminPage = (req, res, next) => {
-    db.all('SELECT * FROM users', [], (err, rows) => {
-        if (err) {
-            res.status(400).json({ error: err.message });
-            return;
-        }
-        res.status(200).json({ rows });
-    });
+exports.admin = (req, res, next) => {
+    res.send('Protected admin route');
 };
