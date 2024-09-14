@@ -1,8 +1,13 @@
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import { Input } from '../../shared/ui/Input/Input';
 import { LoginButton } from '../../features/auth/loginButton/LoginButton';
+import { User } from '../../shared/types/user';
 
-export const Login = () => {
+type LoginProps = {
+    setUserHandler: (user: User) => void;
+};
+
+export const Login: FC<LoginProps> = ({ setUserHandler }) => {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
 
@@ -23,7 +28,11 @@ export const Login = () => {
                 onChange={onPasswordChange}
                 placeholder="Password"
             />
-            <LoginButton login={login} password={password} />
+            <LoginButton
+                login={login}
+                password={password}
+                setUserHandler={setUserHandler}
+            />
         </>
     );
 };

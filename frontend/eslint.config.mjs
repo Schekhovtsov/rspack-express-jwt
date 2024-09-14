@@ -7,25 +7,25 @@ import globals from 'globals';
 import ts from 'typescript-eslint';
 
 export default [
-  { languageOptions: { globals: globals.browser } },
-  js.configs.recommended,
-  ...ts.configs.recommended,
-  ...fixupConfigRules([
+    { languageOptions: { globals: globals.browser } },
+    js.configs.recommended,
+    ...ts.configs.recommended,
+    ...fixupConfigRules([
+        {
+            ...react,
+            settings: {
+                react: { version: 'detect' },
+            },
+        },
+        reactJsx,
+    ]),
     {
-      ...react,
-      settings: {
-        react: { version: 'detect' },
-      },
+        plugins: {
+            'react-hooks': fixupPluginRules(reactHooks),
+        },
+        rules: {
+            ...reactHooks.configs.recommended.rules,
+        },
     },
-    reactJsx,
-  ]),
-  {
-    plugins: {
-      'react-hooks': fixupPluginRules(reactHooks),
-    },
-    rules: {
-      ...reactHooks.configs.recommended.rules,
-    },
-  },
-  { ignores: ['dist/'] },
+    { ignores: ['dist/'] },
 ];

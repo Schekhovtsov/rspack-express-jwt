@@ -89,7 +89,7 @@ exports.register = async (req, res, next) => {
     };
 
     db.run(
-        `INSERT INTO users (login, password, role (?,?,?)`,
+        `INSERT INTO users (login, password, role) VALUES (?,?,?)`,
         [user.login, user.password, user.role],
         function (err, result) {
             if (err) {

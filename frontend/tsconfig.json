@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["DOM", "ES2020"],
+    "target": "ES2021",
+    "lib": ["DOM", "ES2021"],
     "module": "ESNext",
     "jsx": "react-jsx",
     "noEmit": true,
@@ -11,7 +11,7 @@
     "resolveJsonModule": true,
     "moduleResolution": "bundler",
     "useDefineForClassFields": true,
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
   },
-  "include": ["src"]
+  "include": ["src"],
 }

@@ -22,7 +22,7 @@ exports.verifyUserToken = (req, res, next) => {
         }
 
         req.user = verifiedUser; // user_id & role
-
+        console.log('verifiedUser: ', verifiedUser);
         next();
     } catch (error) {
         res.status(400).send('Некорретный токен');
@@ -30,6 +30,7 @@ exports.verifyUserToken = (req, res, next) => {
 };
 
 exports.IsAdmin = async (req, res, next) => {
+    console.log(req.user);
     if (req.user.role === 'admin') {
         next();
     } else {

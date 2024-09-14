@@ -15,7 +15,7 @@ export const RegisterButton: FC<RegisterButtonProps> = ({
         const body = {
             login: login,
             password: password,
-            role: 1,
+            role: 'user',
         };
 
         await fetch(`${BASE_URL}/register`, {

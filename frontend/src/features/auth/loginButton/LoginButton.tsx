@@ -1,13 +1,19 @@
 import { FC } from 'react';
 
 import { BASE_URL } from '../../../../public/config';
+import { User } from '../../../shared/types/user';
 
 type LoginButtonProps = {
     login: string;
     password: string;
+    setUserHandler: (user: User) => void;
 };
 
-export const LoginButton: FC<LoginButtonProps> = ({ login, password }) => {
+export const LoginButton: FC<LoginButtonProps> = ({
+    login,
+    password,
+    setUserHandler,
+}) => {
     const onClickHandler = async () => {
         const body = {
             login: login,
@@ -22,10 +28,12 @@ export const LoginButton: FC<LoginButtonProps> = ({ login, password }) => {
             body: JSON.stringify(body),
         });
 
-        const { token } = await response.json();
+        const { data, token } = await response.json();
 
         if (token) {
-            localStorage.setItem('test_token', token);
+            document.cookie = `test_token=${token}`;
+
+            setUserHandler(data);
         }
     };
 
